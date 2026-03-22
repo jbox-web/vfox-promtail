@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#MISE description="Run plugin tests - install and execute tool"
+set -euo pipefail
+
+mise plugin link --force promtail .
+mise cache clear
+mise install promtail@3.5.12
+
+# Capture and display the output while also verifying it
+output=$(mise exec "promtail@3.5.12" -- "promtail" --version)
+echo "promtail output: ${output}"
+
+if echo "${output}" | grep -q '3.5.12'; then
+  echo "✓ Tests passed"
+else
+  echo "✗ Test failed: expected version promtail@3.5.12"
+  exit 1
+fi
